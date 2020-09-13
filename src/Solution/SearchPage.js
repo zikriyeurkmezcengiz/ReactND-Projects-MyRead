@@ -1,8 +1,37 @@
 import React, { Component } from "react";
+import * as BooksAPI from "../BooksAPI";
+import Book from "./Book";
 import "../App.css";
+import PropTypes from "prop-types";
 
 class SearchPage extends Component {
+  static propTypes = {
+    onChangeShelf: PropTypes.func,
+  };
+  state = {
+    searchKeyword: undefined,
+    shelf: undefined,
+    selectedBook: undefined,
+  };
   render() {
+    const handleQueryChange = (searchKeyword) => {
+      this.setState(() => ({
+        searchKeyword: searchKeyword.trim(),
+      }));
+      BooksAPI.search(searchKeyword).then((_books) => {
+        debugger;
+        this.setState(() => ({
+          books:
+            !!_books && _books.length !== undefined && _books.length > 0
+              ? _books
+              : undefined,
+        }));
+      });
+    };
+    const onChangeShelfLocal = (book, shelf) => {
+      this.props.onChangeShelf(book, shelf);
+    };
+
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -21,11 +50,25 @@ class SearchPage extends Component {
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-            <input type="text" placeholder="Search by title or author" />
+            <input
+              type="text"
+              placeholder="Search by title or author"
+              onChange={(event) => handleQueryChange(event.target.value)}
+            />
           </div>
         </div>
         <div className="search-books-results">
-          <ol className="books-grid" />
+          <ol className="books-grid">
+            {console.log(this.state.books)}
+            {this.state.books !== undefined &&
+              this.state.books.map((book) => (
+                <Book
+                  key={book.id}
+                  book={book}
+                  onChangeShelf={onChangeShelfLocal}
+                />
+              ))}
+          </ol>
         </div>
       </div>
     );
