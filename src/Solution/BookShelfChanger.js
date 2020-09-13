@@ -1,13 +1,16 @@
 import React from "react";
 import "../App.css";
 import { BookHelper } from "../utils/helpers";
+import PropTypes from "prop-types";
 
-const BookShelfChanger = ({ bookId, onChangeShelf }) => {
+const BookShelfChanger = ({ onChangeShelf, shelf }) => {
   const {
     categoryKeys,
     categoryDefinitions,
     getPropertyName,
   } = BookHelper.default;
+
+  const selectedShelf = shelf !== undefined ? shelf : "move";
 
   const onChangeShelfLocal = (event) => {
     debugger;
@@ -15,8 +18,8 @@ const BookShelfChanger = ({ bookId, onChangeShelf }) => {
   };
 
   return (
-    <select onChange={onChangeShelfLocal}>
-      <option value="move" disabled selected>
+    <select onChange={onChangeShelfLocal} value={selectedShelf}>
+      <option value="move" disabled>
         Move to...
       </option>
       <option value={getPropertyName(categoryKeys, (o) => o.currentlyReading)}>
@@ -33,6 +36,11 @@ const BookShelfChanger = ({ bookId, onChangeShelf }) => {
       </option>
     </select>
   );
+};
+
+BookShelfChanger.propTypes = {
+  books: PropTypes.object,
+  onChangeShelf: PropTypes.func,
 };
 
 export default BookShelfChanger;

@@ -1,8 +1,13 @@
 import React, { Component } from "react";
 import "../App.css";
 import BookShelfChanger from "./BookShelfChanger";
+import PropTypes from "prop-types";
 
 class Book extends Component {
+  static propTypes = {
+    books: PropTypes.object,
+    onChangeShelf: PropTypes.func,
+  };
   render() {
     const { book } = this.props;
     const onChangeShelfLocal = (shelf) => {
@@ -22,8 +27,9 @@ class Book extends Component {
             />
             <div className="book-shelf-changer">
               <BookShelfChanger
-                bookId={book.id}
+                key={book.id}
                 onChangeShelf={onChangeShelfLocal}
+                shelf={book.shelf}
               />
             </div>
           </div>
@@ -31,7 +37,9 @@ class Book extends Component {
           <div className="book-title">{book.subtitle}</div>
           {book.authors !== undefined &&
             book.authors.map((author) => (
-              <div className="book-authors">{author}</div>
+              <div key={author} className="book-authors">
+                {author}
+              </div>
             ))}
         </div>
       </li>
