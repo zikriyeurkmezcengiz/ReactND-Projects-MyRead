@@ -1,13 +1,27 @@
-const CategoryKeys = {
-  None: 0,
-  CurrentlyReading: 1,
-  WantToRead: 2,
-  Read: 3,
+const categoryKeys = {
+  none: 0,
+  currentlyReading: 1,
+  wantToRead: 2,
+  read: 3,
 };
 
-const CategoryDefinitions = {
-  [CategoryKeys.None]: "None",
-  [CategoryKeys.CurrentlyReading]: "Currenty Reading",
-  [CategoryKeys.WantToRead]: "Want To Read",
-  [CategoryKeys.Read]: "Read",
+const categoryDefinitions = {
+  [categoryKeys.none]: "None",
+  [categoryKeys.currentlyReading]: "Currenty Reading",
+  [categoryKeys.wantToRead]: "Want To Read",
+  [categoryKeys.read]: "Read",
+};
+function getPropertyName(obj, expression) {
+  var res = {};
+  // eslint-disable-next-line
+  Object.keys(obj).map((k) => {
+    res[k] = () => k;
+  });
+  return expression(res)();
+}
+
+export default {
+  categoryKeys,
+  categoryDefinitions,
+  getPropertyName,
 };

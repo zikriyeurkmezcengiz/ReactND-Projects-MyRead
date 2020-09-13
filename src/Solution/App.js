@@ -1,20 +1,39 @@
-import React from "react";
-// import * as BooksAPI from './BooksAPI'
+import React, { useState } from "react";
+import * as BooksAPI from "../BooksAPI";
 import "../App.css";
-import BookList from "./BookList";
+import BookCategoryList from "./BookCategoryList";
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
+    books: undefined,
     showSearchPage: false,
   };
-
+  componentDidMount = () => {
+    debugger;
+    BooksAPI.getAll().then((_books) => {
+      this.setState(() => ({
+        books: _books,
+      }));
+    });
+  };
   render() {
+    const updateBook = (book, shelf) => {
+      debugger;
+      console.log();
+      if (book != undefined) {
+        BooksAPI.update(book, shelf).then(() => {
+          book.shelf = shelf;
+          let listClone = [];
+          listClone = [...this.state.books];
+          const index = listClone.findIndex((i) => i.id === book.id);
+          if (index > -1) listClone[index] = book;
+          this.setState(() => ({
+            books: listClone,
+          }));
+        });
+      }
+    };
+
     return (
       <div className="app">
         {this.state.showSearchPage ? (
@@ -47,7 +66,11 @@ class BooksApp extends React.Component {
             <div className="list-books-title">
               <h1>MyReads</h1>
             </div>
-            <BookList />
+
+            <BookCategoryList
+              books={this.state.books}
+              onChangeShelf={updateBook}
+            />
             <div className="open-search">
               <button onClick={() => this.setState({ showSearchPage: true })}>
                 Add a book
