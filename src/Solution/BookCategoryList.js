@@ -1,20 +1,49 @@
 import React, { Component } from "react";
+import * as BooksAPI from "../BooksAPI";
 import "../App.css";
 import { BookHelper } from "../utils/helpers";
 import BookList from "./BookList";
 
 class BookCategoryList extends Component {
+  state = {
+    books: undefined,
+    showSearchPage: false,
+  };
+  componentDidMount = () => {
+    debugger;
+    BooksAPI.getAll().then((_books) => {
+      this.setState(() => ({
+        books: _books,
+      }));
+    });
+  };
   render() {
     const {
       categoryKeys,
       categoryDefinitions,
       getPropertyName,
     } = BookHelper.default;
-    const { books } = this.props;
+
+    const updateBook = (book, shelf) => {
+      debugger;
+      console.log();
+      if (book != undefined) {
+        BooksAPI.update(book, shelf).then(() => {
+          book.shelf = shelf;
+          let listClone = [];
+          listClone = [...this.state.books];
+          const index = listClone.findIndex((i) => i.id === book.id);
+          if (index > -1) listClone[index] = book;
+          this.setState(() => ({
+            books: listClone,
+          }));
+        });
+      }
+    };
 
     const currReadingList =
-      books !== undefined
-        ? books.filter(
+      this.state.books !== undefined
+        ? this.state.books.filter(
             (x) =>
               x.shelf ===
               getPropertyName(categoryKeys, (o) => o.currentlyReading)
@@ -22,26 +51,20 @@ class BookCategoryList extends Component {
         : undefined;
 
     const wantToReadList =
-      books !== undefined
-        ? books.filter(
+      this.state.books !== undefined
+        ? this.state.books.filter(
             (x) =>
               x.shelf === getPropertyName(categoryKeys, (o) => o.wantToRead)
           )
         : undefined;
 
     const readList =
-      books !== undefined
-        ? books.filter(
+      this.state.books !== undefined
+        ? this.state.books.filter(
             (x) => x.shelf === getPropertyName(categoryKeys, (o) => o.read)
           )
         : undefined;
 
-    const noneList =
-      books !== undefined
-        ? books.filter(
-            (x) => x.shelf === getPropertyName(categoryKeys, (o) => o.none)
-          )
-        : undefined;
     const onChangeShelfLocal = (book, shelf) => {
       this.props.onChangeShelf(book, shelf);
     };
@@ -53,31 +76,19 @@ class BookCategoryList extends Component {
             <h2 className="bookshelf-title">
               {categoryDefinitions[categoryKeys.currentlyReading]}
             </h2>
-            <BookList
-              books={currReadingList}
-              onChangeShelf={onChangeShelfLocal}
-            />
+            <BookList books={currReadingList} onChangeShelf={updateBook} />
           </div>
           <div className="bookshelf">
             <h2 className="bookshelf-title">
               {categoryDefinitions[categoryKeys.wantToRead]}
             </h2>
-            <BookList
-              books={wantToReadList}
-              onChangeShelf={onChangeShelfLocal}
-            />
+            <BookList books={wantToReadList} onChangeShelf={updateBook} />
           </div>
           <div className="bookshelf">
             <h2 className="bookshelf-title">
               {categoryDefinitions[categoryKeys.read]}
             </h2>
-            <BookList books={readList} onChangeShelf={onChangeShelfLocal} />
-          </div>
-          <div className="bookshelf">
-            <h2 className="bookshelf-title">
-              {categoryDefinitions[categoryKeys.none]}
-            </h2>
-            <BookList books={noneList} onChangeShelf={onChangeShelfLocal} />
+            <BookList books={readList} onChangeShelf={updateBook} />
           </div>
         </div>
       </div>
