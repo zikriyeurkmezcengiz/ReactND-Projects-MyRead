@@ -59,7 +59,6 @@ class SearchPage extends Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {console.log(this.state.books)}
             {this.state.books !== undefined &&
               this.state.books.map((book) => (
                 <Book
