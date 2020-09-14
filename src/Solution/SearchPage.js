@@ -23,6 +23,7 @@ class SearchPage extends Component {
         if (!!_books && _books.length !== undefined && _books.length > 0) {
           let listClone = [..._books];
           !!shelfedBooks &&
+            // eslint-disable-next-line
             shelfedBooks.map((book) => {
               const index = listClone.findIndex((i) => i.id === book.id);
               if (index > -1) listClone[index] = book;
