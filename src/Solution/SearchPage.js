@@ -10,22 +10,32 @@ class SearchPage extends Component {
   };
   state = {
     searchKeyword: undefined,
-    shelf: undefined,
     selectedBook: undefined,
   };
   render() {
+    const shelfedBooks = this.props.books;
     const handleQueryChange = (searchKeyword) => {
       this.setState(() => ({
         searchKeyword: searchKeyword.trim(),
       }));
       BooksAPI.search(searchKeyword).then((_books) => {
         debugger;
-        this.setState(() => ({
-          books:
-            !!_books && _books.length !== undefined && _books.length > 0
-              ? _books
-              : undefined,
-        }));
+        if (!!_books && _books.length !== undefined && _books.length > 0) {
+          let listClone = [..._books];
+          !!shelfedBooks &&
+            shelfedBooks.map((book) => {
+              const index = listClone.findIndex((i) => i.id === book.id);
+              if (index > -1) listClone[index] = book;
+            });
+
+          this.setState(() => ({
+            books: listClone,
+          }));
+        } else {
+          this.setState(() => ({
+            books: undefined,
+          }));
+        }
       });
     };
     const onChangeShelfLocal = (book, shelf) => {
