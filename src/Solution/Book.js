@@ -22,8 +22,11 @@ class Book extends Component {
               style={{
                 width: 128,
                 height: 193,
-                backgroundImage: `url("${!!book.imageLinks &&
-                  book.imageLinks.thumbnail}")`,
+                backgroundImage: `url("${
+                  !!book.imageLinks
+                    ? book.imageLinks.thumbnail
+                    : "https://www.flaticon.com/svg/static/icons/svg/148/148988.svg"
+                }")`,
               }}
             />
             <div className="book-shelf-changer">
